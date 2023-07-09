@@ -1,0 +1,229 @@
+ans1)
+#include <iostream>
+using namespace std;
+
+int calculateDepth(const string& preorder, int& index) {
+    if (index >= preorder.length()) {
+        return -1;  // Invalid input or end of traversal
+    }
+
+    char node = preorder[index++];
+    if (node == 'l') {
+        return 0;  // Leaf node has a depth of 0
+    } else if (node == 'n') {
+        int leftDepth = calculateDepth(preorder, index);
+        int rightDepth = calculateDepth(preorder, index);
+        return max(leftDepth, rightDepth) + 1;  // Internal node has a depth of max(leftDepth, rightDepth) + 1
+    }
+
+    return -1;  // Invalid node character
+}
+
+int main() {
+    string preorder;
+    cout << "Enter the preorder traversal of the binary tree: ";
+    cin >> preorder;
+
+    int index = 0;
+    int depth = calculateDepth(preorder, index);
+
+    cout << "Depth of the binary tree: " << depth << endl;
+
+    return 0;
+}
+
+ans2)
+#include <iostream>
+#include <queue>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int value) {
+        data = value;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+void printLeftView(Node* root) {
+    if (root == nullptr)
+        return;
+
+    queue<Node*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        int levelSize = q.size();
+        bool isFirstNode = true;
+
+        for (int i = 0; i < levelSize; i++) {
+            Node* current = q.front();
+            q.pop();
+
+            if (isFirstNode) {
+                cout << current->data << " ";
+                isFirstNode = false;
+            }
+
+            if (current->left)
+                q.push(current->left);
+            if (current->right)
+                q.push(current->right);
+        }
+    }
+}
+
+int main() {
+    // Create the binary tree
+    Node* root = new Node(4);
+    root->left = new Node(5);
+    root->right = new Node(2);
+    root->right->left = new Node(3);
+    root->right->right = new Node(1);
+    root->right->left->left = new Node(6);
+    root->right->left->right = new Node(7);
+
+    cout << "Left view of the binary tree: ";
+    printLeftView(root);
+    cout << endl;
+
+    return 0;
+}
+
+ans3)
+#include <iostream>
+#include <queue>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* left;
+    Node* right;
+
+    Node(int value) {
+        data = value;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+void printRightView(Node* root) {
+    if (root == nullptr)
+        return;
+
+    queue<Node*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        int levelSize = q.size();
+        Node* rightmostNode = nullptr;
+
+        for (int i = 0; i < levelSize; i++) {
+            Node* current = q.front();
+            q.pop();
+
+            rightmostNode = current;
+
+            if (current->left)
+                q.push(current->left);
+            if (current->right)
+                q.push(current->right);
+        }
+
+        cout << rightmostNode->data << " ";
+    }
+}
+
+int main() {
+    // Create the binary tree
+    Node* root = new Node(1);
+    root->left = new Node(2);
+    root->right = new Node(3);
+    root->left->left = new Node(4);
+    root->left->right = new Node(5);
+    root->right->left = new Node(6);
+    root->right->right = new Node(7);
+    root->right->right->right = new Node(8);
+
+    cout << "Right view of the binary tree: ";
+    printRightView(root);
+    cout << endl;
+
+    return 0;
+}
+ans4)
+#include <iostream>
+#include <queue>
+#include <map>
+using namespace std;
+
+struct Node {
+    int data;
+    int hd;  // Horizontal distance
+    Node* left;
+    Node* right;
+
+    Node(int value, int distance) {
+        data = value;
+        hd = distance;
+        left = nullptr;
+        right = nullptr;
+    }
+};
+
+void printBottomView(Node* root) {
+    if (root == nullptr)
+        return;
+
+    queue<Node*> q;
+    map<int, int> bottomViewMap;  // Map to store the bottom view nodes with their horizontal distances
+
+    q.push(root);
+
+    while (!q.empty()) {
+        Node* current = q.front();
+        q.pop();
+
+        int hd = current->hd;
+
+        // Update the horizontal distance of the child nodes
+        if (current->left) {
+            current->left->hd = hd - 1;
+            q.push(current->left);
+        }
+        if (current->right) {
+            current->right->hd = hd + 1;
+            q.push(current->right);
+        }
+
+        // Update the bottom view node at the current horizontal distance
+        bottomViewMap[hd] = current->data;
+    }
+
+    // Print the bottom view nodes in order of their horizontal distances
+    for (auto it = bottomViewMap.begin(); it != bottomViewMap.end(); ++it) {
+        cout << it->second << " ";
+    }
+}
+
+int main() {
+    // Create the binary tree
+    Node* root = new Node(20, 0);
+    root->left = new Node(8, -1);
+    root->right = new Node(22, 1);
+    root->left->left = new Node(5, -2);
+    root->left->right = new Node(3, 0);
+    root->right->right = new Node(25, 2);
+    root->left->right->left = new Node(10, -1);
+    root->left->right->right = new Node(14, 1);
+
+    cout << "Bottom view of the binary tree: ";
+    printBottomView(root);
+    cout << endl;
+
+    return 0;
+}
